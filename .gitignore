@@ -36,3 +36,5 @@ Thumbs.db
 _main/**/generated/
 _main/federation/sites.json
 _main/federation/certs/
+_main/federation/servers.local.json
+_main/federation/servers.local.tmp

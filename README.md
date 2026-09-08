@@ -54,6 +54,8 @@ cd configurator
 ## Документация
 
 - [_main/README.md](_main/README.md) — развитие проекта и федерация Moodle
+- [_main/federation/start-gui.pyw](_main/federation/start-gui.pyw) — интерфейс
+  списка серверов: добавление адресов и проверка Moodle по HTTP/HTTPS (Python/Tkinter).
 - Перед публикацией: `git add <файлы>`, затем `python scripts/check_repository.py`.
   Проверка ограничивает размер каждого файла 5 МиБ и исключает бинарные файлы;
   дополнительно просмотрите `git diff --cached` на предмет секретов и персональных данных.
