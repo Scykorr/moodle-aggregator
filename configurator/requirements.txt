@@ -1,0 +1,2 @@
+# GUI uses stdlib tkinter only. Build tools:
+pyinstaller>=6.3.0

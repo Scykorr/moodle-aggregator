@@ -1,0 +1,9 @@
+.git
+transfer-package
+configurator/dist
+configurator/build
+configurator/.venv
+**/__pycache__
+*.pyc
+*.tar
+docs/_build
