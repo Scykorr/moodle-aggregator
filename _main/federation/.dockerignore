@@ -1,0 +1,6 @@
+*
+!moodle_check.py
+!web/
+!web/**
+web/__pycache__/
+web/tests/

@@ -38,3 +38,4 @@ _main/federation/sites.json
 _main/federation/certs/
 _main/federation/servers.local.json
 _main/federation/servers.local.tmp
+!_main/federation/.env.aggregator.example
