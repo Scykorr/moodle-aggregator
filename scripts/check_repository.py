@@ -24,7 +24,8 @@ def main():
         total += len(data)
         if (path.suffix.lower() in BLOCKED or
                 (path.name.startswith('.env') and not path.name.endswith('.example')) or
-                any(p in {'.venv', 'build', 'dist', 'transfer-package', '__pycache__'}
+                any(p in {'.venv', 'build', 'dist', 'transfer-package', '__pycache__',
+                          'generated', 'certs'}
                     for p in path.parts)):
             errors.append(f'{name}: excluded artifact or local configuration')
         if len(data) > MAX_SIZE:

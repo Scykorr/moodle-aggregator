@@ -7,3 +7,6 @@ configurator/.venv
 *.pyc
 *.tar
 docs/_build
+.env
+.env.*
+_main

@@ -1,0 +1,60 @@
+name: moodle-identity
+
+services:
+  db:
+    image: postgres:17.11
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: ${KC_DB_PASSWORD:?Run prepare.py first}
+    volumes:
+      - identity_db:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U keycloak -d keycloak"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    networks: [identity]
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.7.3
+    command: [start, --import-realm]
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://db:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: ${KC_DB_PASSWORD:?Run prepare.py first}
+      KC_BOOTSTRAP_ADMIN_USERNAME: bootstrap-admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_BOOTSTRAP_ADMIN_PASSWORD:?Run prepare.py first}
+      KC_HOSTNAME: ${IDP_URL:?Set the canonical HTTPS URL}
+      KC_HTTP_ENABLED: "false"
+      KC_HTTPS_CERTIFICATE_FILE: /opt/keycloak/conf/tls/server.crt
+      KC_HTTPS_CERTIFICATE_KEY_FILE: /opt/keycloak/conf/tls/server.key
+      KC_HEALTH_ENABLED: "true"
+    ports:
+      - "${IDP_BIND_IP:?Set the local server IP}:${IDP_HTTPS_PORT:-443}:8443"
+    volumes:
+      - type: bind
+        source: ./generated/realm
+        target: /opt/keycloak/data/import
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ./certs
+        target: /opt/keycloak/conf/tls
+        read_only: true
+        bind:
+          create_host_path: false
+    networks: [identity]
+
+networks:
+  identity:
+
+volumes:
+  identity_db:

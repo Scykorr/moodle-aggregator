@@ -34,3 +34,5 @@ Thumbs.db
 *.pfx
 *.log
 _main/**/generated/
+_main/federation/sites.json
+_main/federation/certs/
