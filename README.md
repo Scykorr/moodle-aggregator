@@ -8,8 +8,8 @@
 |-----------|------------|
 | `docker-compose.yml` | Moodle + MariaDB |
 | `Dockerfile` | Образ Moodle 5.2 на PHP 8.3 |
-| `scripts/export-for-transfer.ps1` | Сборка пакета для USB (образы + проект) |
-| `scripts/import-and-start.ps1` | Загрузка образов и запуск на целевом ПК |
+| `scripts/export-for-transfer.ps1` | Пакет для USB: образы + volumes + проект |
+| `scripts/import-and-start.ps1` | Загрузка образов, восстановление данных и запуск офлайн |
 | `configurator/` | Python GUI → `MoodleConfigurator.exe` |
 | `docs/` | Руководства на русском |
 
@@ -45,9 +45,9 @@ cd configurator
 
 1. Установите Docker Desktop (установочный файл лучше заранее скачать и положить в пакет).
 2. Скопируйте содержимое `transfer-package`.
-3. Из `project\scripts` выполните `.\import-and-start.ps1`.
-4. Запустите `MoodleConfigurator.exe`, задайте IP этого ПК в сети, примените.
-5. Откройте в браузерах сети: `http://<IP>/`.
+3. Запустите `IMPORT-AND-START.cmd` в корне `transfer-package` (Docker Desktop должен быть Running).
+4. Откройте `http://localhost/`. Если нужен доступ по LAN IP — задайте `MOODLE_WWWROOT` и пересоздайте контейнер moodle.
+5. Не выполняйте `docker compose build` / `pull` на целевом ПК.
 
 Учётка по умолчанию (см. `.env`): `admin` / `Admin123!`.
 

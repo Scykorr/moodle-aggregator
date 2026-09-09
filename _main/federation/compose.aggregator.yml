@@ -7,7 +7,7 @@ services:
       dockerfile: web/Dockerfile
     restart: unless-stopped
     ports:
-      - "${AGGREGATOR_BIND_IP:-127.0.0.1}:${AGGREGATOR_PORT:-8088}:8080"
+      - "${AGGREGATOR_BIND_IP:-127.0.0.1}:${AGGREGATOR_PORT:-8090}:8080"
     environment:
       AGGREGATOR_TOKEN: ${AGGREGATOR_TOKEN:-}
     volumes:
