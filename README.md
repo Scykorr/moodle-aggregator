@@ -8,8 +8,8 @@
 |-----------|------------|
 | `docker-compose.yml` | Moodle + MariaDB |
 | `Dockerfile` | Образ Moodle 5.2 на PHP 8.3 |
-| `scripts/export-for-transfer.ps1` | Сборка пакета для USB (образы + проект) |
-| `scripts/import-and-start.ps1` | Загрузка образов и запуск на целевом ПК |
+| `scripts/export-for-transfer.cmd` | Сборка пакета для USB (образы + проект) |
+| `scripts/import-and-start.cmd` | Загрузка образов и запуск на целевом ПК |
 | `configurator/` | Python GUI → `MoodleConfigurator.exe` |
 | `docs/` | Руководства на русском |
 
@@ -36,16 +36,16 @@ cd configurator
 5. Для переноса:
 
 ```powershell
-.\scripts\export-for-transfer.ps1
+.\scripts\export-for-transfer.cmd
 ```
 
-Скопируйте папку `transfer-package` на целевой компьютер.
+Скопируйте **всю** папку `transfer-package` (`images` + `project`) на целевой компьютер.
 
 ## На целевом ПК (без интернета)
 
 1. Установите Docker Desktop (установочный файл лучше заранее скачать и положить в пакет).
 2. Скопируйте содержимое `transfer-package`.
-3. Из `project\scripts` выполните `.\import-and-start.ps1`.
+3. Из `project\scripts` выполните `.\import-and-start.cmd`.
 4. Запустите `MoodleConfigurator.exe`, задайте IP этого ПК в сети, примените.
 5. Откройте в браузерах сети: `http://<IP>/`.
 
@@ -59,6 +59,7 @@ cd configurator
 - Перед публикацией: `git add <файлы>`, затем `python scripts/check_repository.py`.
   Проверка ограничивает размер каждого файла 5 МиБ и исключает бинарные файлы;
   дополнительно просмотрите `git diff --cached` на предмет секретов и персональных данных.
+  Скрипты переноса: `python scripts/test_transfer_scripts.py`.
 
 - [docs/01-развёртывание.md](docs/01-развёртывание.md) — развёртывание и перенос
 - [docs/02-работа-с-конфигуратором.md](docs/02-работа-с-конфигуратором.md) — работа с EXE

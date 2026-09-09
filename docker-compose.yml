@@ -1,6 +1,7 @@
 services:
   db:
     image: mariadb:11.4
+    pull_policy: missing
     container_name: moodle_db
     restart: unless-stopped
     environment:
@@ -32,7 +33,9 @@ services:
       dockerfile: Dockerfile
       args:
         MOODLE_BRANCH: ${MOODLE_BRANCH:-MOODLE_502_STABLE}
+    # Import loads this tag from transfer-package/images (--no-build --pull never).
     image: moodle-offline:5.2
+    pull_policy: missing
     container_name: moodle_app
     restart: unless-stopped
     depends_on:
