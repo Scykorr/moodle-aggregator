@@ -1,54 +1,112 @@
-# Import Moodle images and start stack on offline target PC.
+# Import Moodle images and start stack on an offline target PC.
+# Prefer import-and-start.cmd (bypasses ExecutionPolicy).
 
 param(
     [string]$PackageDir = ""
 )
 
 $ErrorActionPreference = "Stop"
+. (Join-Path $PSScriptRoot "_common.ps1")
 
-# If launched from transfer-package\project\scripts, go up to project root
-$Root = Split-Path -Parent $PSScriptRoot
+$Root = Get-ComposeRoot -StartDir $PSScriptRoot
 Set-Location $Root
 
-if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
-    Write-Error "Docker not found. Install Docker Desktop first."
-}
+Assert-DockerReady
 
-# Locate images: sibling ../images (transfer layout) or ./transfer-package/images
-$candidates = @(
-    (Join-Path (Split-Path $Root) "images"),
-    (Join-Path $Root "transfer-package\images"),
-    (Join-Path $Root "images")
-)
-if ($PackageDir) {
-    $candidates = @((Join-Path $PackageDir "images")) + $candidates
-}
+function Find-ImagesDir {
+    param(
+        [string]$Root,
+        [string]$PackageDir
+    )
+    $need = @("moodle-offline-5.2.tar", "mariadb-11.4.tar")
+    $candidates = New-Object System.Collections.Generic.List[string]
 
-$ImagesDir = $null
-foreach ($c in $candidates) {
-    if (Test-Path (Join-Path $c "moodle-offline-5.2.tar")) {
-        $ImagesDir = $c
-        break
+    if ($PackageDir) {
+        $PackageDir = $PackageDir.Trim().Trim('"')
+        if (-not [IO.Path]::IsPathRooted($PackageDir)) {
+            $PackageDir = [IO.Path]::GetFullPath((Join-Path (Get-Location) $PackageDir))
+        }
+        $candidates.Add($PackageDir)
+        $candidates.Add((Join-Path $PackageDir "images"))
+        $candidates.Add((Join-Path $PackageDir "transfer-package"))
+        $candidates.Add((Join-Path $PackageDir "transfer-package\images"))
+        $candidates.Add((Join-Path $PackageDir "project\..\images"))
     }
+
+    $walk = $Root
+    for ($i = 0; $i -lt 4; $i++) {
+        $candidates.Add((Join-Path $walk "images"))
+        $candidates.Add((Join-Path $walk "transfer-package\images"))
+        $parent = Split-Path $walk
+        if (-not $parent -or $parent -eq $walk) {
+            break
+        }
+        $walk = $parent
+        $candidates.Add((Join-Path $walk "images"))
+    }
+
+    $seen = @{}
+    foreach ($c in $candidates) {
+        if (-not $c) { continue }
+        try {
+            $full = [IO.Path]::GetFullPath($c)
+        } catch {
+            continue
+        }
+        if ($seen.ContainsKey($full)) { continue }
+        $seen[$full] = $true
+        $ok = $true
+        foreach ($name in $need) {
+            if (-not (Test-NonEmptyImageTar (Join-Path $full $name))) {
+                $ok = $false
+                break
+            }
+        }
+        if ($ok) {
+            return $full
+        }
+    }
+    return $null
 }
 
+$ImagesDir = Find-ImagesDir -Root $Root -PackageDir $PackageDir
 if (-not $ImagesDir) {
-    Write-Error "Image archives not found. Expected moodle-offline-5.2.tar and mariadb-11.4.tar"
+    throw @"
+Image archives not found or too small (empty/corrupt tar).
+Need both:
+  moodle-offline-5.2.tar
+  mariadb-11.4.tar
+Place them in transfer-package\images next to the project folder, or pass -PackageDir.
+"@
 }
 
 Write-Host "==> Loading images from $ImagesDir"
-docker load -i (Join-Path $ImagesDir "mariadb-11.4.tar")
-docker load -i (Join-Path $ImagesDir "moodle-offline-5.2.tar")
+$mariadbTar = [IO.Path]::GetFullPath((Join-Path $ImagesDir "mariadb-11.4.tar"))
+$moodleTar = [IO.Path]::GetFullPath((Join-Path $ImagesDir "moodle-offline-5.2.tar"))
+Import-DockerImageTar -TarPath $mariadbTar -Name "mariadb" -Tag "11.4"
+Import-DockerImageTar -TarPath $moodleTar -Name "moodle-offline" -Tag "5.2"
 
-if (-not (Test-Path ".\.env")) {
-    Copy-Item ".\.env.example" ".\.env"
-    Write-Host "Created .env from .env.example — set MOODLE_WWWROOT before first use."
+$envFile = Join-Path $Root ".env"
+$example = Join-Path $Root ".env.example"
+if (-not (Test-Path -LiteralPath $envFile)) {
+    if (-not (Test-Path -LiteralPath $example)) {
+        throw "Missing .env and .env.example in $Root"
+    }
+    Copy-Item -LiteralPath $example -Destination $envFile
+    Write-Host "Created .env from .env.example -- set MOODLE_WWWROOT before first use."
 }
 
-Write-Host "==> Starting Moodle stack..."
-docker compose up -d
+$env:COMPOSE_BAKE = "false"
+$upArgs = @("compose", "up", "-d", "--no-build")
+$composeHelp = & docker compose up --help 2>&1 | Out-String
+if ($composeHelp -match "--pull") {
+    $upArgs += @("--pull", "never")
+}
+
+Write-Host "==> Starting Moodle stack (loaded images, no rebuild)..."
+Invoke-Docker -DockerArgs $upArgs
 
 Write-Host "==> Status:"
-docker compose ps
+Invoke-Docker -DockerArgs @("compose", "ps")
 Write-Host ""
 Write-Host "Open MoodleConfigurator.exe to set LAN IP (wwwroot), then open http://<IP>/ in browsers on the LAN."
