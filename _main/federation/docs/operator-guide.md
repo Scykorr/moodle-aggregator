@@ -29,6 +29,13 @@
 Сертификат Keycloak самоподписанный — браузер покажет предупреждение; для
 стенда это нормально.
 
+## Офлайн-перенос на другой ПК
+
+- Агрегатор: [offline-aggregator.md](offline-aggregator.md) (`scripts/export-aggregator.ps1`)
+- Keycloak: [offline-keycloak.md](offline-keycloak.md) (`scripts/export-identity.ps1`)
+
+На целевом Windows 11 без интернета: Docker Desktop Running → `IMPORT-*.cmd`.
+
 ## Как запускать и останавливать
 
 Все команды из папки `_main/federation`.

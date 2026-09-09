@@ -3,6 +3,7 @@ name: moodle-identity
 services:
   db:
     image: postgres:17.11
+    pull_policy: never
     restart: unless-stopped
     environment:
       POSTGRES_DB: keycloak
@@ -19,6 +20,7 @@ services:
 
   keycloak:
     image: quay.io/keycloak/keycloak:26.7.3
+    pull_policy: never
     command: [start, --import-realm]
     restart: unless-stopped
     depends_on:

@@ -2,6 +2,7 @@ name: moodle-aggregator
 services:
   aggregator:
     image: moodle-aggregator:local
+    pull_policy: never
     build:
       context: .
       dockerfile: web/Dockerfile

@@ -1,5 +1,7 @@
 .env
 transfer-package/
+_main/federation/transfer-aggregator/
+_main/federation/transfer-identity/
 configurator/.venv/
 configurator/build/
 configurator/dist/

@@ -137,18 +137,29 @@ Moodle по шагам выше. Генератор первичного раз�
 
 ## 6. Офлайн и резервное копирование
 
-На машине с интернетом загрузите образы и сохраните их для переноса:
+Полный перенос Keycloak на Windows без интернета (образы + secrets + опционально БД):
+**[offline-keycloak.md](offline-keycloak.md)** и скрипты `scripts/export-identity.ps1` /
+`scripts/import-identity.ps1`.
+
+Кратко на машине с интернетом:
 
 ```powershell
 docker pull quay.io/keycloak/keycloak:26.7.3
 docker pull postgres:17.11
+.\scripts\export-identity.ps1
+# На целевом сервере: IMPORT-IDENTITY.cmd в transfer-identity/
+```
+
+Ручной минимум:
+
+```powershell
 docker save -o identity-images.tar quay.io/keycloak/keycloak:26.7.3 postgres:17.11
 # На целевом сервере:
 docker load -i identity-images.tar
 docker compose --env-file generated/.env up -d --pull never
 ```
 
-Образы и ключи не публикуются; секреты лучше генерировать на целевом сервере.
+Образы и ключи не публикуются; пакет `transfer-identity` содержит секреты.
 Для эксплуатации резервируйте PostgreSQL, конфигурацию, сертификаты/ключи и
 каждый Moodle отдельно. Для логического дампа используйте `pg_dump -Fc` в файл
 внутри контейнера и `docker compose cp` для вывода, чтобы PowerShell не испортил

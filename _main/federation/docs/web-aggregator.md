@@ -95,16 +95,30 @@ docker compose -f compose.aggregator.yml stop
 Резервную копию JSON можно получить командой `docker compose cp` из `/data/servers.json`
 после сохранения списка. Храните её вне Git, поскольку она содержит адреса сети.
 
-Для машины без интернета заранее соберите образ и сохраните его:
+Для машины без интернета заранее соберите образ и сохраните пакет:
+
+См. пошаговую инструкцию и скрипты: **[offline-aggregator.md](offline-aggregator.md)**.
+
+Кратко:
+
+```powershell
+# Источник:
+.\scripts\export-aggregator.ps1
+# Цель (офлайн):
+# IMPORT-AGGREGATOR.cmd  внутри transfer-aggregator/
+```
+
+Ручной минимум:
 
 ```powershell
 docker save -o moodle-aggregator.tar moodle-aggregator:local
-# На целевой машине с файлами проекта:
+# На целевой машине:
 docker load -i moodle-aggregator.tar
-docker compose -f compose.aggregator.yml up -d --no-build --pull never
+docker compose --env-file .env.aggregator -f compose.aggregator.yml up -d --no-build --pull never
 ```
 
-Образ переносит приложение, но не volume со списком. `.tar` исключён из Git.
+Образ переносит приложение; `volumes\aggregator_data.tgz` в пакете — список серверов.
+`.tar` и каталоги `transfer-*` исключены из Git.
 Приложение работает от UID 10001, использует Waitress, не монтирует Docker socket
 и не получает доступ к базам данных Moodle. API изменения проверяет Origin и
 специальный заголовок; при заданном пароле он требуется и для чтения списка.
