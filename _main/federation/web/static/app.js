@@ -2,7 +2,7 @@
 const $ = selector => document.querySelector(selector);
 let rows = [], revision = 0, dirty = false, working = false, authorized = false, polling = false;
 let token = ''; // Kept in memory only, never in localStorage or URLs.
-const labels = {idle:'Не проверен', queued:'В очереди', checking:'Проверяем…', moodle:'Moodle обнаружен', unknown:'Moodle не подтверждён', restricted:'Доступ ограничен', unreachable:'Нет соединения', invalid:'Ошибка адреса', http_error:'Ошибка HTTP'};
+const labels = {idle:'Не проверен', queued:'В очереди', checking:'Проверяем…', moodle:'Площадка найдена', unknown:'Площадка не подтверждена', restricted:'Доступ ограничен', unreachable:'Нет соединения', invalid:'Ошибка адреса', http_error:'Ошибка ответа сервера'};
 function notify(text, error=false) { $('#notice').textContent=text; $('#notice').classList.toggle('error',error); }
 function setDirty(value) {dirty=value; $('#save-state').textContent=value?'Есть несохранённые изменения':'Все изменения сохранены'; $('#save-state').classList.toggle('dirty',value);}
 function newId() { return globalThis.crypto?.randomUUID?.() || 'row-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2); }

@@ -93,13 +93,13 @@ try {
     }
 
     $readme = @(
-        "Moodle Aggregator offline package",
-        "1. Start Docker Desktop on the target PC.",
-        "2. Copy this whole folder to the target PC.",
-        "3. Double-click IMPORT-AGGREGATOR.cmd",
-        "4. Catalog (students): http://127.0.0.1:8090/",
-        "5. Admin (edit + checks): http://127.0.0.1:8090/admin",
-        "See project/docs/offline-aggregator.md"
+        "Офлайн-пакет учебного каталога Moodle",
+        "1. Запустите Docker Desktop на целевом ПК.",
+        "2. Скопируйте эту папку целиком на целевой ПК.",
+        "3. Дважды щёлкните IMPORT-AGGREGATOR.cmd",
+        "4. Каталог (студенты): http://127.0.0.1:8090/",
+        "5. Админка (правка и проверки): http://127.0.0.1:8090/admin",
+        "См. project/docs/offline-aggregator.md"
     ) -join "`r`n"
     Write-Utf8File -Path (Join-Path $OutDir "README.txt") -Content ($readme + "`r`n")
 

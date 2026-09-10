@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Админка каталога Moodle</title>
+  <title>Админка учебного каталога</title>
   <link rel="stylesheet" href="/static/admin.css">
   <script src="/static/admin.js" defer></script>
 </head>
 <body>
   <header class="topbar">
-    <div class="brand"><span class="mark">m</span><span>Moodle <strong>Aggregator</strong></span></div>
+    <div class="brand"><span class="mark">У</span><span>Учебный <strong>каталог</strong></span></div>
     <div class="top-links">
       <a href="/">Открыть портал</a>
       <span class="environment"><i></i> Администрирование</span>
@@ -20,7 +20,7 @@
       <div>
         <p class="eyebrow">КАТАЛОГ СЕТИ</p>
         <h1>Факультеты и кафедры</h1>
-        <p class="intro">Перетаскивайте блоки мышью. Факультет без Moodle — только группировка.</p>
+        <p class="intro">Перетаскивайте блоки мышью. Факультет без адреса — только группировка.</p>
       </div>
       <span class="storage">Сохраняется на сервере</span>
     </section>
@@ -45,7 +45,7 @@
         <div>
           <button id="add-faculty" class="primary" type="button">＋ Факультет</button>
           <button id="add-item" type="button">＋ Кафедра / площадка</button>
-          <button id="check-all" type="button">Проверить Moodle</button>
+          <button id="check-all" type="button">Проверить площадки</button>
         </div>
         <button id="save" type="button">Сохранить</button>
       </div>
@@ -90,7 +90,7 @@
       <span class="drag-handle" title="Перетащить кафедру">⋮⋮</span>
       <div class="item-fields">
         <input class="item-name" type="text" placeholder="Название кафедры / площадки" maxlength="200" autocomplete="off">
-        <input class="item-address" type="text" placeholder="https://moodle.example (можно пусто)" maxlength="2048" autocomplete="off" spellcheck="false">
+        <input class="item-address" type="text" placeholder="Адрес площадки (HTTP или HTTPS), можно пусто" maxlength="2048" autocomplete="off" spellcheck="false">
         <div class="item-status"><span class="badge">Не проверен</span><span class="result-detail"></span></div>
       </div>
       <div class="item-actions">

@@ -85,13 +85,13 @@ try {
     }
 
     $readme = @(
-        "Keycloak offline package - CONTAINS SECRETS",
-        "1. Start Docker Desktop on the target PC.",
-        "2. Copy this whole folder to the target PC.",
-        "3. Double-click IMPORT-IDENTITY.cmd",
-        "4. Open https://127.0.0.1:8443/admin (bootstrap-admin)",
-        "Password: project/generated/.env -> KC_BOOTSTRAP_ADMIN_PASSWORD",
-        "See project/docs/offline-keycloak.md"
+        "Офлайн-пакет Keycloak — СОДЕРЖИТ СЕКРЕТЫ",
+        "1. Запустите Docker Desktop на целевом ПК.",
+        "2. Скопируйте эту папку целиком на целевой ПК.",
+        "3. Дважды щёлкните IMPORT-IDENTITY.cmd",
+        "4. Откройте https://127.0.0.1:8443/admin (логин bootstrap-admin)",
+        "Пароль: project/generated/.env → KC_BOOTSTRAP_ADMIN_PASSWORD",
+        "См. project/docs/offline-keycloak.md"
     ) -join "`r`n"
     Write-Utf8File -Path (Join-Path $OutDir "README.txt") -Content ($readme + "`r`n")
 

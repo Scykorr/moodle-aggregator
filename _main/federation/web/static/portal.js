@@ -25,8 +25,8 @@ function renderCards(items) {
   }
   return `<div class="grid">${items.map((item) => {
     const hasLink = Boolean(item.address);
-    const meta = hasLink ? escapeHtml(item.address) : 'Ссылка на Moodle не задана';
-    const cta = hasLink ? 'Открыть Moodle →' : 'Нет адреса';
+    const meta = hasLink ? escapeHtml(item.address) : 'Ссылка не задана';
+    const cta = hasLink ? 'Открыть площадку →' : 'Нет адреса';
     if (!hasLink) {
       return `<div class="card disabled"><div class="card-name">${escapeHtml(item.name)}</div><div class="card-meta">${meta}</div><div class="card-cta">${cta}</div></div>`;
     }
@@ -51,7 +51,7 @@ async function load() {
   }
 
   $('#catalog-title').textContent = data.title || 'Учебные площадки';
-  document.title = `${data.title || 'Учебные площадки'} — Moodle`;
+  document.title = data.title || 'Учебные площадки';
 
   const tabs = $('#tabs');
   const panels = $('#panels');

@@ -2,9 +2,9 @@
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const labels = {
-  idle: 'Не проверен', queued: 'В очереди', checking: 'Проверяем…', moodle: 'Moodle обнаружен',
-  unknown: 'Moodle не подтверждён', restricted: 'Доступ ограничен', unreachable: 'Нет соединения',
-  invalid: 'Ошибка адреса', http_error: 'Ошибка HTTP',
+  idle: 'Не проверен', queued: 'В очереди', checking: 'Проверяем…', moodle: 'Площадка найдена',
+  unknown: 'Площадка не подтверждена', restricted: 'Доступ ограничен', unreachable: 'Нет соединения',
+  invalid: 'Ошибка адреса', http_error: 'Ошибка ответа сервера',
 };
 
 let token = '';
@@ -50,7 +50,7 @@ async function api(path, method = 'GET', body) {
     $('#login').hidden = false;
     $('#workspace').hidden = true;
   }
-  if (!response.ok) throw new Error(data.error || 'Ошибка соединения с агрегатором.');
+  if (!response.ok) throw new Error(data.error || 'Ошибка соединения с каталогом.');
   return data;
 }
 
