@@ -7,7 +7,7 @@ RUN pip install --no-cache-dir -r requirements.txt \
     && useradd --uid 10001 --gid aggregator --no-create-home aggregator \
     && mkdir /data && chown aggregator:aggregator /data
 COPY moodle_check.py ./moodle_check.py
-COPY web/app.py web/registry.py ./
+COPY web/app.py web/registry.py web/catalog.py ./
 COPY web/static ./static
 USER 10001:10001
 EXPOSE 8080

@@ -24,7 +24,7 @@ transfer-aggregator/
   IMPORT-AGGREGATOR.cmd
   README.txt
   images/moodle-aggregator-local.tar
-  volumes/aggregator_data.tgz      # список серверов, если volume уже был
+  volumes/aggregator_data.tgz      # catalog.json + servers.json, если volume был
   project/
     compose.aggregator.yml
     .env.aggregator
@@ -39,25 +39,47 @@ transfer-aggregator/
 ## Целевой ПК (без интернета)
 
 1. Установите Docker Desktop заранее (установочный файл тоже можно привезти на USB).
-2. Запустите Docker Desktop → Status **Running**.
+2. Запустите Docker Desktop → Status **Running** (кита в трее, зелёный).
 3. Скопируйте папку `transfer-aggregator` на диск.
 4. Дважды щёлкните **`IMPORT-AGGREGATOR.cmd`**  
-   либо:
+   либо из `cmd.exe`:
 
-```powershell
-cd <путь>\transfer-aggregator
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\import-aggregator.ps1 -PackageDir .
+```bat
+cd /d D:\path\transfer-aggregator
+IMPORT-AGGREGATOR.cmd
 ```
 
-5. Откройте **http://127.0.0.1:8090** (порт из `runtime\.env.aggregator`).
+Не запускайте `.ps1` двойным щелчком через «Открыть с помощью» — только через `.cmd`
+или:
+
+```bat
+powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File ".\scripts\import-aggregator.ps1" -PackageDir "%cd%."
+```
+
+Обратите внимание на `%cd%.` / `%~dp0.` — точка после пути обязательна:
+иначе хвостовой `\` в кавычках ломает разбор аргументов PowerShell.
+
+5. Откройте:
+   - каталог (студенты): **http://127.0.0.1:8090/**
+   - админку: **http://127.0.0.1:8090/admin**  
+   (порт из `runtime\.env.aggregator`).
 
 Скрипт:
 
 - загружает образ (`docker load`, без registry);
 - копирует compose/env в `transfer-aggregator\runtime`;
 - поднимает контейнер с `--no-build --pull never` и `pull_policy: never`;
-- при наличии `volumes\aggregator_data.tgz` восстанавливает список серверов;
+- при наличии `volumes\aggregator_data.tgz` восстанавливает каталог и probe-список;
 - проверяет `http://127.0.0.1:<port>/healthz`.
+
+### Если CMD пишет ошибку
+
+| Сообщение | Что сделать |
+|---|---|
+| Docker Desktop is not running | Запустить Docker Desktop и дождаться Running |
+| Missing image file | Скопирован неполный пакет — нужен `images\moodle-aggregator-local.tar` |
+| Cannot overwrite variable Args… | Старая версия скрипта — возьмите свежий `transfer-aggregator` из репозитория |
+| string is missing the terminator | Старый `.cmd` с `%~dp0` без точки — пересоберите пакет `export-aggregator.ps1` |
 
 ## Ручные команды (эквивалент)
 
@@ -84,8 +106,9 @@ curl.exe -s http://127.0.0.1:8090/healthz
 | Интернет на цели | Не нужен, если образ уже в `.tar` |
 | `localhost` в списке Moodle | Проверка идёт из контейнера — используйте LAN IP / `host.docker.internal` |
 | Порт | По умолчанию **8090** (не 8088 — занят другими проектами) |
-| Volume | Без `.tgz` список серверов пустой — его можно заполнить в UI |
-| Секреты | В пакете только адреса; пароль панели — `AGGREGATOR_TOKEN` в `.env.aggregator` |
+| Volume | Без `.tgz` каталог пустой — заполните в `/admin` |
+| Секреты | Адреса в volume; пароль админки — `AGGREGATOR_TOKEN` в `.env.aggregator` |
+| Публичный `/` | Без пароля; не путать с `/admin` |
 | Не делать | `docker compose build` / `pull` на офлайн-ПК |
 
 ## Остановка / логи
@@ -97,4 +120,4 @@ docker compose --env-file .env.aggregator -f compose.aggregator.yml logs --tail 
 docker compose --env-file .env.aggregator -f compose.aggregator.yml stop
 ```
 
-Не используйте `down -v`, если нужно сохранить список серверов.
+Не используйте `down -v`, если нужно сохранить каталог (`catalog.json`).

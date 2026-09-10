@@ -6,8 +6,9 @@
 
 ## Что готово
 
-- `compose.aggregator.yml` / `web/`: **основной агрегатор в Docker с веб-интерфейсом**,
-  редактированием списка HTTP(S)-серверов, фоновыми проверками и постоянным томом.
+- `compose.aggregator.yml` / `web/`: **агрегатор в Docker** — публичный каталог
+  (факультеты → кафедры), админка с drag-and-drop, фоновые проверки Moodle,
+  постоянный том (`catalog.json` + список для probe).
 - `start-gui.pyw` / `server_manager.py`: предыдущий настольный интерфейс,
   оставлен как дополнительная локальная утилита.
 - `compose.yml`: отдельный Keycloak + PostgreSQL, HTTPS, отдельный volume.
@@ -20,6 +21,7 @@
 - [Существующие аккаунты и приёмочные проверки](docs/migration.md).
 - [Результаты проверки комплекта](docs/verification.md).
 - [Практика: агрегатор + Keycloak](docs/operator-guide.md).
+- [Несколько Moodle и учётные записи (пошагово)](docs/multi-moodle-accounts.md).
 - [Офлайн-перенос агрегатора](docs/offline-aggregator.md).
 - [Офлайн-перенос Keycloak](docs/offline-keycloak.md).
 
@@ -38,14 +40,14 @@
 docker compose --env-file .env.aggregator -f compose.aggregator.yml up -d --build
 ```
 
-Откройте **http://localhost:8090** (порт в `.env.aggregator`). Добавляйте строки,
-вводите адреса, проверяйте один или все серверы. Кнопка «Сохранить список»
-сохраняет изменения; перед проверкой список сохраняется автоматически. Адреса
-хранятся в Docker volume, общем для всех браузеров, и сохраняются при
-пересоздании контейнера.
+- **Каталог (студенты):** http://localhost:8090 — без пароля.
+- **Админка:** http://localhost:8090/admin — факультеты/кафедры, DnD, проверки
+  (пароль `AGGREGATOR_TOKEN`, если задан).
+
+Данные в Docker volume; переживают пересоздание контейнера.
 
 Как работать с двумя стеками (агрегатор + Keycloak), учётками и несколькими
-Moodle: [Практика](docs/operator-guide.md). Подробности панели:
+Moodle: [Практика](docs/operator-guide.md). Подробности:
 [Docker-агрегатор](docs/web-aggregator.md).
 
 ### Настольная утилита (предыдущий вариант)

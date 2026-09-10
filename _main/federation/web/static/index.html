@@ -1,33 +1,12 @@
 <!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Moodle Aggregator — серверы сети</title>
-  <meta name="description" content="Список серверов Moodle и проверка их доступности из Docker.">
-  <link rel="stylesheet" href="/static/style.css">
-  <script src="/static/app.js" defer></script>
+  <meta charset="utf-8">
+  <meta http-equiv="refresh" content="0; url=/admin">
+  <title>Переход в админку</title>
+  <link rel="canonical" href="/admin">
 </head>
 <body>
-  <header class="topbar"><div class="brand"><span class="mark">m</span><span>Moodle <strong>Aggregator</strong></span></div><span class="environment"><i></i> Проверка из Docker</span></header>
-  <main>
-    <section class="heading"><div><p class="eyebrow">УПРАВЛЕНИЕ СЕТЬЮ</p><h1>Серверы Moodle</h1><p class="intro">Все ваши учебные площадки — в одном списке.</p></div><span class="storage">Список сохраняется на сервере</span></section>
-    <section id="login" class="login" hidden>
-      <form id="login-form"><label for="password">Пароль администратора</label><div class="login-controls"><input id="password" type="password" autocomplete="current-password" required><button class="primary">Войти</button></div></form>
-    </section>
-    <div id="workspace" hidden>
-      <section class="metrics" aria-label="Сводка проверок"><div><span>Всего серверов</span><strong id="total">0</strong></div><div><span><i class="dot green"></i>Moodle обнаружен</span><strong id="found">0</strong></div><div><span><i class="dot amber"></i>Требуют внимания</span><strong id="attention">0</strong></div></section>
-      <section class="panel" aria-label="Список серверов">
-        <div class="toolbar"><div><button id="add" class="primary">＋ Добавить сервер</button><button id="check-all">Проверить все</button></div><button id="save">Сохранить список</button></div>
-        <div class="table-head"><span>№</span><span>Адрес сервера</span><span>Результат проверки</span><span>Действия</span></div>
-        <div id="servers"></div>
-        <div id="empty" class="empty" hidden>Список пуст. Добавьте первый сервер Moodle.</div>
-        <div class="panel-note">Можно ввести IP, адрес с портом или путь: <code>10.30.0.10</code><span>·</span><code>http://10.40.0.10:8080/moodle</code></div>
-      </section>
-      <div class="bottom"><span id="save-state">Все изменения сохранены</span><span>До 6 одновременных проверок</span></div>
-      <p class="footnote">Проверка ищет признаки Moodle на странице. Ответ сервера не подтверждает исправность входа или точную версию платформы.</p>
-    </div>
-    <p id="notice" role="status" aria-live="polite"></p>
-  </main>
-  <footer><span>Moodle Aggregator</span><span>HTTP / HTTPS · Локальная сеть</span></footer>
-  <template id="row-template"><div class="server-row"><span class="row-number"></span><div class="address-field"><input class="address" type="text" placeholder="http://192.168.1.50" spellcheck="false" autocomplete="off" maxlength="2048"><span class="final-url"></span></div><div class="result"><span class="badge">Не проверен</span><span class="result-detail"></span></div><div class="actions"><button class="check">Проверить</button><button class="remove" title="Удалить сервер" aria-label="Удалить сервер">×</button></div></div></template>
-</body></html>
+  <p>Админка переехала на <a href="/admin">/admin</a>. Публичный каталог: <a href="/">/</a>.</p>
+</body>
+</html>

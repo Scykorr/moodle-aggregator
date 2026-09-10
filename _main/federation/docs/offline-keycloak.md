@@ -51,12 +51,15 @@ transfer-identity/
 1. Docker Desktop **Running**.
 2. Скопируйте `transfer-identity` на диск.
 3. Запустите **`IMPORT-IDENTITY.cmd`**  
-   или:
+   или из `cmd.exe`:
 
-```powershell
-cd <путь>\transfer-identity
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\import-identity.ps1 -PackageDir .
+```bat
+cd /d D:\path\transfer-identity
+IMPORT-IDENTITY.cmd
 ```
+
+Важно: в `.cmd` используется `-PackageDir "%~dp0."` (с точкой). Не убирайте точку —
+хвостовой `\` без неё ломает разбор аргументов PowerShell.
 
 4. Откройте **https://127.0.0.1:8443/admin** (принять самоподписанный сертификат).
 5. Логин: `bootstrap-admin`  

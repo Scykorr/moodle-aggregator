@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Учебные площадки Moodle</title>
+  <meta name="description" content="Каталог учебных Moodle по факультетам и кафедрам.">
+  <link rel="stylesheet" href="/static/portal.css">
+  <script src="/static/portal.js" defer></script>
+</head>
+<body>
+  <div class="atmosphere" aria-hidden="true"></div>
+  <header class="site-header">
+    <a class="brand" href="/">
+      <span class="brand-mark">M</span>
+      <span class="brand-text">
+        <span class="brand-name">Moodle</span>
+        <span class="brand-sub">Campus Catalog</span>
+      </span>
+    </a>
+    <a class="admin-link" href="/admin">Администрирование</a>
+  </header>
+
+  <main>
+    <section class="hero">
+      <p class="hero-kicker">Единый вход в учебную сеть</p>
+      <h1 id="catalog-title">Учебные площадки</h1>
+      <p class="hero-lead">Выберите факультет или площадку и перейдите в нужный Moodle.</p>
+    </section>
+
+    <section class="catalog" aria-label="Каталог Moodle">
+      <div id="tabs" class="tabs" role="tablist" aria-label="Факультеты"></div>
+      <div id="panels" class="panels"></div>
+      <p id="empty" class="empty" hidden>Каталог пока пуст. Администратор добавит факультеты и кафедры в панели управления.</p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span>Moodle Campus Catalog</span>
+    <span>Переход на площадку открывается в новой вкладке</span>
+  </footer>
+</body>
+</html>

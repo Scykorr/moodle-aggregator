@@ -1,31 +1,40 @@
-"""Docker-hosted administrative web interface; no changes to Moodle services."""
+"""Docker-hosted Moodle aggregator: public catalog portal and admin checks."""
 import hmac
 import os
-from pathlib import Path
 
 from flask import Flask, jsonify, request, send_from_directory
 from werkzeug.exceptions import HTTPException
 
+from catalog import Catalog
 from registry import ConflictError, Registry
 
 
-def create_app(directory=None, token=None, registry=None):
+def create_app(directory=None, token=None, registry=None, catalog=None):
     app = Flask(__name__, static_folder='static')
     app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024
-    inventory = registry or Registry(directory or os.environ.get('DATA_DIR', '/data'))
+    data_dir = directory or os.environ.get('DATA_DIR', '/data')
+    inventory = registry or Registry(data_dir)
+    store = catalog or Catalog(data_dir, registry=inventory)
     app.extensions['registry'] = inventory
+    app.extensions['catalog'] = store
     token = os.environ.get('AGGREGATOR_TOKEN', '') if token is None else token
 
     @app.before_request
     def protect_api():
         if not request.path.startswith('/api/'):
             return None
-        if token and not hmac.compare_digest(request.headers.get('Authorization', '').encode(), ('Bearer ' + token).encode()):
+        public_get = request.method in ('GET', 'HEAD', 'OPTIONS') and request.path == '/api/catalog'
+        if public_get:
+            return None
+        if token and not hmac.compare_digest(
+                request.headers.get('Authorization', '').encode(),
+                ('Bearer ' + token).encode()):
             return jsonify(error='Введите пароль администратора.'), 401
         if request.method not in ('GET', 'HEAD', 'OPTIONS'):
             if request.headers.get('X-Aggregator-Request') != '1':
                 return jsonify(error='Запрос отклонён.'), 403
-            if request.headers.get('Origin') and request.headers['Origin'].rstrip('/') != request.host_url.rstrip('/'):
+            origin = request.headers.get('Origin')
+            if origin and origin.rstrip('/') != request.host_url.rstrip('/'):
                 return jsonify(error='Запрос с другого сайта отклонён.'), 403
         return None
 
@@ -34,26 +43,49 @@ def create_app(directory=None, token=None, registry=None):
         response.headers['Cache-Control'] = 'no-store'
         response.headers['X-Content-Type-Options'] = 'nosniff'
         response.headers['Referrer-Policy'] = 'no-referrer'
-        response.headers['Content-Security-Policy'] = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'"
+        response.headers['Content-Security-Policy'] = (
+            "default-src 'self'; script-src 'self'; style-src 'self'; "
+            "img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'"
+        )
         return response
 
     @app.get('/')
-    def index():
-        return send_from_directory(app.static_folder, 'index.html')
+    def portal():
+        return send_from_directory(app.static_folder, 'portal.html')
+
+    @app.get('/admin')
+    def admin():
+        return send_from_directory(app.static_folder, 'admin.html')
 
     @app.get('/healthz')
     def health():
         return jsonify(status='ok')
 
-    @app.get('/api/servers')
-    def servers():
-        return jsonify(inventory.snapshot())
+    @app.get('/api/catalog')
+    def get_catalog():
+        # Public read: no check statuses. Admin UI uses ?admin=1 with auth via before_request.
+        if request.args.get('admin') == '1':
+            if token:
+                expected = ('Bearer ' + token).encode()
+                if not hmac.compare_digest(request.headers.get('Authorization', '').encode(), expected):
+                    return jsonify(error='Введите пароль администратора.'), 401
+            return jsonify(store.snapshot(include_states=True))
+        return jsonify(store.public_snapshot())
 
     def payload():
         data = request.get_json()
         if not isinstance(data, dict):
             raise ValueError('Ожидается JSON-объект.')
         return data
+
+    @app.put('/api/catalog')
+    def save_catalog():
+        data = payload()
+        return jsonify(store.replace(data, data.get('revision')))
+
+    @app.get('/api/servers')
+    def servers():
+        return jsonify(inventory.snapshot())
 
     @app.put('/api/servers')
     def save():

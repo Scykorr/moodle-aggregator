@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Админка каталога Moodle</title>
+  <link rel="stylesheet" href="/static/admin.css">
+  <script src="/static/admin.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="mark">m</span><span>Moodle <strong>Aggregator</strong></span></div>
+    <div class="top-links">
+      <a href="/">Открыть портал</a>
+      <span class="environment"><i></i> Администрирование</span>
+    </div>
+  </header>
+  <main>
+    <section class="heading">
+      <div>
+        <p class="eyebrow">КАТАЛОГ СЕТИ</p>
+        <h1>Факультеты и кафедры</h1>
+        <p class="intro">Перетаскивайте блоки мышью. Факультет без Moodle — только группировка.</p>
+      </div>
+      <span class="storage">Сохраняется на сервере</span>
+    </section>
+
+    <section id="login" class="login" hidden>
+      <form id="login-form">
+        <label for="password">Пароль администратора</label>
+        <div class="login-controls">
+          <input id="password" type="password" autocomplete="current-password" required>
+          <button class="primary">Войти</button>
+        </div>
+      </form>
+    </section>
+
+    <div id="workspace" hidden>
+      <section class="title-row">
+        <label for="catalog-title">Название на портале</label>
+        <input id="catalog-title" type="text" maxlength="200" autocomplete="off">
+      </section>
+
+      <div class="toolbar">
+        <div>
+          <button id="add-faculty" class="primary" type="button">＋ Факультет</button>
+          <button id="add-item" type="button">＋ Кафедра / площадка</button>
+          <button id="check-all" type="button">Проверить Moodle</button>
+        </div>
+        <button id="save" type="button">Сохранить</button>
+      </div>
+
+      <section class="board" aria-label="Структура каталога">
+        <div>
+          <h2 class="board-title">Факультеты</h2>
+          <div id="faculties" class="faculty-list"></div>
+          <p id="faculties-empty" class="empty-hint" hidden>Факультетов пока нет — можно добавить или держать только отдельные площадки.</p>
+        </div>
+        <div>
+          <h2 class="board-title">Без факультета</h2>
+          <p class="board-note">Сюда перетащите кафедры, которые не входят в факультет.</p>
+          <div id="orphans" class="item-list orphan-list" data-faculty=""></div>
+        </div>
+      </section>
+
+      <div class="bottom">
+        <span id="save-state">Все изменения сохранены</span>
+        <span>Проверки — до 6 одновременно</span>
+      </div>
+    </div>
+    <p id="notice" role="status" aria-live="polite"></p>
+  </main>
+
+  <template id="faculty-template">
+    <article class="faculty-card" draggable="true">
+      <div class="faculty-head">
+        <span class="drag-handle" title="Перетащить факультет">⋮⋮</span>
+        <div class="faculty-fields">
+          <input class="faculty-name" type="text" placeholder="Название факультета" maxlength="200" autocomplete="off">
+          <input class="faculty-desc" type="text" placeholder="Краткое описание (необязательно)" maxlength="1000" autocomplete="off">
+        </div>
+        <button class="remove-faculty" type="button" title="Удалить факультет">×</button>
+      </div>
+      <div class="item-list faculty-children"></div>
+    </article>
+  </template>
+
+  <template id="item-template">
+    <div class="item-card" draggable="true">
+      <span class="drag-handle" title="Перетащить кафедру">⋮⋮</span>
+      <div class="item-fields">
+        <input class="item-name" type="text" placeholder="Название кафедры / площадки" maxlength="200" autocomplete="off">
+        <input class="item-address" type="text" placeholder="https://moodle.example (можно пусто)" maxlength="2048" autocomplete="off" spellcheck="false">
+        <div class="item-status"><span class="badge">Не проверен</span><span class="result-detail"></span></div>
+      </div>
+      <div class="item-actions">
+        <button class="check-item" type="button">Проверить</button>
+        <button class="remove-item" type="button" title="Удалить">×</button>
+      </div>
+    </div>
+  </template>
+</body>
+</html>
